@@ -1,0 +1,20 @@
+{
+    "C_Cpp.intelliSenseEngine": "Tag Parser",
+    "idf.adapterTargetName": "esp32s3",
+    "idf.customExtraPaths": "H:\\ESP32\\idf4.4.2\\Espressif\\tools\\xtensa-esp32-elf\\esp-2021r2-patch3-8.4.0\\xtensa-esp32-elf\\bin;H:\\ESP32\\idf4.4.2\\Espressif\\tools\\xtensa-esp32s2-elf\\esp-2021r2-patch3-8.4.0\\xtensa-esp32s2-elf\\bin;H:\\ESP32\\idf4.4.2\\Espressif\\tools\\xtensa-esp32s3-elf\\esp-2021r2-patch3-8.4.0\\xtensa-esp32s3-elf\\bin;H:\\ESP32\\idf4.4.2\\Espressif\\tools\\riscv32-esp-elf\\esp-2021r2-patch3-8.4.0\\riscv32-esp-elf\\bin;H:\\ESP32\\idf4.4.2\\Espressif\\tools\\esp32ulp-elf\\2.28.51-esp-20191205\\esp32ulp-elf-binutils\\bin;H:\\ESP32\\idf4.4.2\\Espressif\\tools\\esp32s2ulp-elf\\2.28.51-esp-20191205\\esp32s2ulp-elf-binutils\\bin;H:\\ESP32\\idf4.4.2\\Espressif\\tools\\cmake\\3.23.1\\bin;H:\\ESP32\\idf4.4.2\\Espressif\\tools\\openocd-esp32\\v0.11.0-esp32-20220411\\openocd-esp32\\bin;H:\\ESP32\\idf4.4.2\\Espressif\\tools\\ninja\\1.10.2;H:\\ESP32\\idf4.4.2\\Espressif\\tools\\idf-exe\\1.0.3;H:\\ESP32\\idf4.4.2\\Espressif\\tools\\ccache\\4.3\\ccache-4.3-windows-64;H:\\ESP32\\idf4.4.2\\Espressif\\tools\\dfu-util\\0.9\\dfu-util-0.9-win64",
+    "idf.customExtraVars": "{\"OPENOCD_SCRIPTS\":\"H:\\\\ESP32\\\\idf4.4.2\\\\Espressif\\\\tools\\\\openocd-esp32\\\\v0.11.0-esp32-20220411/openocd-esp32/share/openocd/scripts\",\"IDF_CCACHE_ENABLE\":\"1\"}",
+    "idf.espIdfPathWin": "H:/ESP32/idf4.4.2/Espressif/frameworks/esp-idf-v4.4.2/",
+    "idf.openOcdConfigs": [
+        "interface/ftdi/esp32_devkitj_v1.cfg",
+        "target/esp32s3.cfg"
+    ],
+    "idf.portWin": "COM4",
+    "idf.pythonBinPathWin": "H:/ESP32/idf4.4.2/Espressif/python_env/idf4.4_py3.8_env/Scripts/python.exe",
+    "idf.toolsPathWin": "H:\\ESP32\\idf4.4.2\\Espressif",
+    "files.associations": {
+        "blue_app.h": "c",
+        "nvs_flash.h": "c",
+        "esp_ota_ops.h": "c"
+    },
+    "idf.flashType": "UART"
+}
