@@ -1,4 +1,4 @@
-<!-- [English](./README.EN.md) | 简体中文 -->
+English | [简体中文](./README.md)
 # Esp32s3 ble
 
 Esp32s3's low-power Bluetooth component communicates with WeChat applets
