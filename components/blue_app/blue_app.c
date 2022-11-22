@@ -256,7 +256,7 @@ void ble_Init(char *name)
     蓝牙栈 `bluedroid stack` 包括了BT和 BLE 使用的基本的define和API */
     ret = esp_bluedroid_init();
     if (ret) {
-        ESP_LOGE(LOG_TAG, "%s init bluetooth failed: %s", __func__, esp_err_to_name(ret));
+        ESP_LOGE(LOG_TAG, "%s c failed: %s", __func__, esp_err_to_name(ret));
         return;}
     ret = esp_bluedroid_enable();
     if (ret) {
@@ -885,4 +885,20 @@ void appToast(char *text)
 
     sprintf(TxText, "%s%s", ToastFlag, text);
     write2device(Ggatts_if, Gconn_id, sizeof(TxText), TxText);
+}
+
+
+/*
+*  关闭蓝牙
+*/
+void ble_close(void)
+{
+    ret = esp_bluedroid_disable();
+    if (ret) {
+        ESP_LOGE(LOG_TAG, "%s disable controller failed: %s", __func__, esp_err_to_name(ret));
+        return;}
+    ret = esp_bluedroid_deinit();
+    if (ret) {
+        ESP_LOGE(LOG_TAG, "%s deinit bluetooth failed: %s", __func__, esp_err_to_name(ret));
+        return;}
 }

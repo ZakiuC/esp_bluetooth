@@ -8,13 +8,14 @@
         "interface/ftdi/esp32_devkitj_v1.cfg",
         "target/esp32s3.cfg"
     ],
-    "idf.portWin": "COM4",
+    "idf.portWin": "COM5",
     "idf.pythonBinPathWin": "H:/ESP32/idf4.4.2/Espressif/python_env/idf4.4_py3.8_env/Scripts/python.exe",
     "idf.toolsPathWin": "H:\\ESP32\\idf4.4.2\\Espressif",
     "files.associations": {
         "blue_app.h": "c",
         "nvs_flash.h": "c",
-        "esp_ota_ops.h": "c"
+        "esp_ota_ops.h": "c",
+        "typeinfo": "c"
     },
     "idf.flashType": "UART"
 }
