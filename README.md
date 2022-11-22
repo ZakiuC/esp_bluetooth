@@ -1,14 +1,13 @@
 <!-- [English](./README.EN.md) | 简体中文 -->
-# Blue App
+# Esp32s3 ble
 
-Esp32s3 的低功耗蓝牙组件
+Esp32s3 的低功耗蓝牙组件与微信小程序通讯
 
-## 使用
+## 函数说明
 
     初始化：ble_Init(name);                         name为ble广播的名字
     关闭蓝牙：ble_close();                          关闭蓝牙
-    检查所有检修命令：CheckCmdAll();                
-    返回16位数据，每一位代表一个命令，低位->高位（命令1->命令x）
+    检查所有检修命令：CheckCmdAll();                返回16位数据，每一位代表一个命令，低位->高位（命令1->命令x）
     单独检查检修命令：CheckCmd(CMDX);               参数为CMDX,X为命令标号，例如 CheckCmd(CMD1) 即检查Cmd1    返回true则有命令，fasle则表示没有命令
     单独检查检修命令并执行对应函数：CheckCmdGoOn(CMDX, FUNC);   参数CMDX同上一个函数，参数FUNC为确认接收有命令后所要执行的函数，此函数需无返回值无参，使用此函数在结束时调用EndMission(CMDX)函数来完成相关参数的处理，以及上报app结束消息。
     修改命令回弹设置：SwitchCmdMode(CMDX, Switch);  参数CMDX同上一个函数，参数 Switch 为 1 或者 0。1 为开启回弹设置，0 为关闭
