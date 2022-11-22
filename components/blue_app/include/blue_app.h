@@ -183,4 +183,5 @@ void SwitchCmdMode(uint8_t *Cmd,uint8_t Switch);//更改检修命令对应的回
 void ClrCmdFlag(uint8_t *Cmd);
 void EndMission(void);
 void appToast(char text[]);
+void ble_close(void);               //关闭蓝牙
 #endif     //ble.h
