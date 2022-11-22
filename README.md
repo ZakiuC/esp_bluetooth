@@ -1,5 +1,5 @@
 [English](./README.EN.md) | 简体中文
-# Esp32s3 ble
+# Esp32s3 低功耗蓝牙
 
 Esp32s3 的低功耗蓝牙组件与微信小程序通讯
 
