@@ -3,6 +3,11 @@ English | [简体中文](./README.md)
 
 Esp32s3's low-power Bluetooth component communicates with WeChat applets
 
+
+## Adaptation of small programs.
+
+WeChat search 咩诶诶诶 small program
+
 ## Function Description
 
     Initialization:ble_Init(name);                         name is the name of the ble broadcast
