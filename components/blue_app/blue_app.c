@@ -461,7 +461,12 @@ static void gatts_profile_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_
             esp_log_buffer_hex("连接设备MAC地址:", param->connect.remote_bda, 6);
             esp_ble_conn_update_params_t conn_params = {0};
             memcpy(conn_params.bda, param->connect.remote_bda, sizeof(esp_bd_addr_t));
-            /* 对于iOS系统，请参考苹果官方文件中关于BLE连接参数的限制。 */
+            /* 对于iOS系统，请参考苹果官方文件中关于BLE连接参数的限制。 
+                ● Interval Max * (Slave Latency + 1) ≤ 2 seconds
+                ● Interval Min ≥ 20 ms
+                ● Interval Min + 20 ms ≤ Interval Max Slave Latency ≤ 4
+                ● connSupervisionTimeout ≤ 6 seconds
+                ● Interval Max * (Slave Latency + 1) * 3 < connSupervisionTimeout*/
             conn_params.latency = 0;
             conn_params.max_int = 0x20;    // max_int = 0x20*1.25ms = 40ms
             conn_params.min_int = 0x10;    // min_int = 0x10*1.25ms = 20ms
@@ -893,12 +898,33 @@ void appToast(char *text)
 */
 void ble_close(void)
 {
+    esp_err_t ret;
     ret = esp_bluedroid_disable();
     if (ret) {
-        ESP_LOGE(LOG_TAG, "%s disable controller failed: %s", __func__, esp_err_to_name(ret));
+        ESP_LOGE(LOG_TAG, "%s disable bluetooth failed: %s", __func__, esp_err_to_name(ret));
         return;}
+    else{
+        ESP_LOGI(LOG_TAG, "disable bluetooth sucessed");
+    }
     ret = esp_bluedroid_deinit();
     if (ret) {
         ESP_LOGE(LOG_TAG, "%s deinit bluetooth failed: %s", __func__, esp_err_to_name(ret));
         return;}
+    else{
+        ESP_LOGI(LOG_TAG, "deinit bluetooth sucessed");
+    }
+    ret = esp_bt_controller_disable();
+    if (ret) {
+        ESP_LOGE(LOG_TAG, "%s disable bt_controller failed: %s", __func__, esp_err_to_name(ret));
+        return;}
+    else{
+        ESP_LOGI(LOG_TAG, "disable bt_controller sucessed");
+    }
+    ret = esp_bt_controller_deinit();
+    if (ret) {
+        ESP_LOGE(LOG_TAG, "%s deinit bt_controller failed: %s", __func__, esp_err_to_name(ret));
+        return;}
+    else{
+        ESP_LOGI(LOG_TAG, "deinit bt_controller sucessed");
+    }
 }
