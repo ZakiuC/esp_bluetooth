@@ -92,7 +92,7 @@ typedef struct
 #define SWITCHON          0X01                  //检修命令开
 #define SWITCHOFF         0X00                  //检修命令关
 
-/** 颜色 **/
+/** 彩虹进度条的颜色 **/
 #define NONE                  "\e[0m"           //清除颜色，即之后的打印为正常输出，之前的不受影响
 #define BLACK                 "\e[0;30m"        //深黑
 #define L_BLACK             "\e[1;30m"          //亮黑，偏灰褐

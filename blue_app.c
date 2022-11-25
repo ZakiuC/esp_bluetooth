@@ -166,9 +166,10 @@ static esp_ble_adv_data_t scan_rsp_data = {
     .flag = (ESP_BLE_ADV_FLAG_GEN_DISC | ESP_BLE_ADV_FLAG_BREDR_NOT_SPT),
 };
 
+//广播参数
 static esp_ble_adv_params_t adv_params = {
-    .adv_int_min         = 0x640,  //   min_int = 0x20*1.25ms = 40ms
-    .adv_int_max         = 0x640,  //   max_int = 0x40*1.25ms = 80ms
+    .adv_int_min         = 0x20,  //   min_int = 0x20*1.25ms = 40ms
+    .adv_int_max         = 0x40,  //   max_int = 0x40*1.25ms = 80ms
     .adv_type            = ADV_TYPE_IND,
     .own_addr_type       = BLE_ADDR_TYPE_PUBLIC,
     .channel_map         = ADV_CHNL_ALL,
@@ -776,7 +777,6 @@ uint16_t CheckCmdAll(void)
     }
     return result;
 }
-
 
 /**
  * Modify the command reset mode of the service mode
