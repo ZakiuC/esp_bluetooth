@@ -167,8 +167,8 @@ static esp_ble_adv_data_t scan_rsp_data = {
 };
 
 static esp_ble_adv_params_t adv_params = {
-    .adv_int_min         = 0x20,
-    .adv_int_max         = 0x40,
+    .adv_int_min         = 0x640,  //   min_int = 0x20*1.25ms = 40ms
+    .adv_int_max         = 0x640,  //   max_int = 0x40*1.25ms = 80ms
     .adv_type            = ADV_TYPE_IND,
     .own_addr_type       = BLE_ADDR_TYPE_PUBLIC,
     .channel_map         = ADV_CHNL_ALL,
@@ -895,6 +895,7 @@ void appToast(char *text)
 
 /*
 *  关闭蓝牙
+*  描述：关闭蓝牙和蓝牙控制器
 */
 void ble_close(void)
 {
