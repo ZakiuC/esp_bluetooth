@@ -13,6 +13,7 @@
 #define CMD_STARTOTA 0XC4	// OTA启动
 #define CMD_SETDATA 0XC5	// 设置数据
 #define CMD_STARTFIX 0XC6	// 开启维修模式
+#define CMD_SAVE2CUP 0XC7	// 是否保存到设备杯子
 
 #define CMD_VERSION 0XB1	// 版本
 #define CMD_TIMES 0XB2	// 次数
@@ -20,6 +21,7 @@
 #define CMD_OTA 0XB4	// OTA
 #define CMD_DATA 0XB5	// 数据
 #define CMD_FIX 0XB6	// 检修模式
+#define CMD_CUP 0XB7	// 杯子状态
 
 #define STARTDATA (uint8_t)0xff // 起始位
 #define ENDDATA (uint8_t)0xff	// 结束位

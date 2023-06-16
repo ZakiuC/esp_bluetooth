@@ -1,3 +1,4 @@
+[English](./README.EN.md) | 简体中文
 #
 ble MTU大小为512，包括以下服务和特征：
 |  | UUID | 
