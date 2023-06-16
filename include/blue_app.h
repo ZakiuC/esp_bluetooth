@@ -6,54 +6,92 @@
 #include <string.h>
 
 /*****************全局宏**********************/
-#define READYOTA 0X03
-#define FINISHOTA 0X04
-#define NOCMD 0X00
+#define CMD_NONE 0X00	// 无命令
+#define CMD_CHECKVERSION 0XC1	// 查询固件版本
+#define CMD_USETIMES 0XC2	// 查询使用次数
+#define CMD_STARTUPDATE 0XC3	// 属性上报线程开关
+#define CMD_STARTOTA 0XC4	// OTA启动
+#define CMD_SETDATA 0XC5	// 设置数据
+#define CMD_STARTFIX 0XC6	// 开启维修模式
 
-//维修命令
-#define CMD1 &BleCmd.OHCmd.Cmd1
-#define CMD2 &BleCmd.OHCmd.Cmd2
-#define CMD3 &BleCmd.OHCmd.Cmd3
-#define CMD4 &BleCmd.OHCmd.Cmd4
-#define CMD5 &BleCmd.OHCmd.Cmd5
-#define CMD6 &BleCmd.OHCmd.Cmd6
-#define CMD7 &BleCmd.OHCmd.Cmd7
+#define CMD_VERSION 0XB1	// 版本
+#define CMD_TIMES 0XB2	// 次数
+#define CMD_UPDATE 0XB3	//属性上报
+#define CMD_OTA 0XB4	// OTA
+#define CMD_DATA 0XB5	// 数据
+#define CMD_FIX 0XB6	// 检修模式
 
-//维修命令掩码
-#define MASKCMD1 (0x1)
-#define MASKCMD2 (0x1 << 1)
-#define MASKCMD3 (0x1 << 2)
-#define MASKCMD4 (0x1 << 3)
-#define MASKCMD5 (0x1 << 4)
-#define MASKCMD6 (0x1 << 5)
-#define MASKCMD7 (0x1 << 6)
+#define STARTDATA (uint8_t)0xff // 起始位
+#define ENDDATA (uint8_t)0xff	// 结束位
 
-/*****************私有宏**********************/
+
+// OTA状态
+typedef enum
+{
+	OTAREADY = 0X00,
+	OTARATE,
+	OTAOVERFILE,
+	OTASUCESS,
+	OTAERROR_1, // 写入错误
+	OTAERROR_2, // 数据验证失败
+	OTAERROR_3, // OTA结束失败
+	OTAERROR_4, // OTA设置boot分区失败
+	OTAFILESIZE
+} otaPeriod_e;
+
+// 蓝牙模式
+typedef enum
+{
+	CLOSE = 0X00,
+	APP,
+	FIX,
+	OTA,
+} bleMode_e;
+
+// 检修模式
+typedef enum
+{
+	NOMODE = 0X00,
+	MODE1,
+	MODE2,
+	MODE3,
+	MODE4,
+	MODE5,
+	MODE6,
+	MODE7
+} fixMode_e;
+
+/****应用数据格式*****
+ * StartData | SumData_1 | ... | SumData_4 | CMD | DataLen | PropertyData_1 | PropertyData_2 | PropertyData_3 | PropertyData_4| PropertyData_5 | PropertyData_6 | PropertyData_7 | PropertyData_8 | EndData
+ */
 /**
- * 检修命令结构体
- * 描述：接收检修命令结构体
- * Cmd1：命令1
- * Cmd2：命令2
- * Cmd3：命令3
- * Cmd4：命令4
- * Cmd5：命令5
- * Cmd6：命令6
- * Cmd7：命令7
+ * 接收数据结构体
+ * SUM： 校验和
+ * CMD: 命令
+ * DataLen: 数据长度
+ * PropertyData_1: 数据1
+ * PropertyData_2: 数据2
+ * PropertyData_3: 数据3
+ * PropertyData_4: 数据4
+ * PropertyData_5: 数据5
+ * PropertyData_6: 数据6
+ * PropertyData_7: 数据7
+ * PropertyData_8: 数据8
  */
 typedef struct
 {
-    uint8_t Cmd1;
-    uint8_t Cmd2;
-    uint8_t Cmd3;
-    uint8_t Cmd4;
-    uint8_t Cmd5;
-    uint8_t Cmd6;
-    uint8_t Cmd7;
-} Overhaul_t;
-
-/****数据格式*****
- * StartData | SumData_1 | ... | SumData_4 | Data_0 ~ Data_x | ota_cmd | ota_fileSize_1 | ... | ota_fileSize_4 | EndData
- */
+	uint32_t SUM;
+	uint8_t CMD;
+	uint8_t DataLen;
+	uint8_t PropertyData_1;
+	uint8_t PropertyData_2;
+	uint8_t PropertyData_3;
+	uint8_t PropertyData_4;
+	uint8_t PropertyData_5;
+	uint8_t PropertyData_6;
+	uint8_t PropertyData_7;
+	uint8_t PropertyData_8;
+} TEST_DATA_t;
 
 /**
  * 接收数据结构体
@@ -62,10 +100,8 @@ typedef struct
  * index：索引
  * startPosition：开始位置
  * sumData：数据和校验
- * cmdFix：检修命令
- * ota_cmd：ota命令
- * ota_fileSize：ota文件大小
- * sumCheck：计算接收数据和*/
+ * data：数据内容
+ * sumCheck：计算接收数据和 */
 typedef struct
 {
     uint16_t len;
@@ -73,56 +109,11 @@ typedef struct
     uint16_t index;
     uint16_t startPosition;
     uint32_t sumData;
-    Overhaul_t cmdFix;
-    uint8_t ota_cmd;
-    uint32_t ota_fileSize;
-    uint32_t sumCheck;
-} RxData_t;
 
-#define STARTDATA (uint8_t)0xff //起始位
-#define ENDDATA (uint8_t)0xff   //结束位
+	TEST_DATA_t data;
 
-#define SWITCHON 0X01  //检修命令开
-#define SWITCHOFF 0X00 //检修命令关
-
-/** 彩虹进度条的颜色 **/
-#define NONE "\e[0m"        //清除颜色，即之后的打印为正常输出，之前的不受影响
-#define BLACK "\e[0;30m"    //深黑
-#define L_BLACK "\e[1;30m"  //亮黑，偏灰褐
-#define RED "\e[0;31m"      //深红，暗红
-#define L_RED "\e[1;31m"    //鲜红
-#define GREEN "\e[0;32m"    //深绿，暗绿
-#define L_GREEN "\e[1;32m"  //鲜绿
-#define BROWN "\e[0;33m"    //深黄，暗黄
-#define YELLOW "\e[1;33m"   //鲜黄
-#define BLUE "\e[0;34m"     //深蓝，暗蓝
-#define L_BLUE "\e[1;34m"   //亮蓝，偏白灰
-#define PURPLE "\e[0;35m"   //深粉，暗粉，偏暗紫
-#define L_PURPLE "\e[1;35m" //亮粉，偏白灰
-#define CYAN "\e[0;36m"     //暗青色
-#define L_CYAN "\e[1;36m"   //鲜亮青色
-#define GRAY "\e[0;37m"     //灰色
-#define WHITE "\e[1;37m"    //白色，字体粗一点，比正常大，比bold小
-#define BOLD "\e[1m"        //白色，粗体
-#define UNDERLINE "\e[4m"   //下划线，白色，正常大小
-#define BLINK "\e[5m"       //闪烁，白色，正常大小
-#define REVERSE "\e[7m"     //反转，即字体背景为白色，字体为黑色
-#define HIDE "\e[8m"        //隐藏
-#define CLEAR "\e[2J"       //清除
-#define CLRLINE "\r\e[K"    //清除行
-#define HIDECURSOR "\e[?25l"
-
-/**
- * 命令结构体
- * 描述：接收命令结构体
- * OHCmd：检修命令
- * OtaCmd：Ota命令
- */
-typedef struct
-{
-    Overhaul_t OHCmd;
-    uint8_t OtaCmd;
-} Cmd_t;
+	uint32_t sumCheck;
+} Test_RxData_t;
 
 /**
  * 接收文件相关数据结构体
@@ -135,15 +126,37 @@ typedef struct
  */
 typedef struct
 {
-    uint32_t TotalLen;
-    uint32_t ReceivingProgress;
-    uint32_t LastProgress;
-    float TotalFile;
+	uint32_t TotalLen;
+	uint32_t ReceivingProgress;
+	uint32_t LastProgress;
+	uint32_t TotalFile;
 } FileSize_t;
 
-/***************全局变量*****************/
-extern Cmd_t BleCmd;        //命令
-extern FileSize_t FileSize; //文件大小
+typedef struct
+{
+	uint8_t data1;
+	uint8_t data2;
+	uint8_t data3;
+} SettingData_t;
+
+typedef uint8_t *(*dataFuncType_t)(void);
+
+// 蓝牙控制结构体
+typedef struct
+{
+	char *name;
+	bleMode_e bleMode;
+	fixMode_e fixMode;
+	TEST_DATA_t data;
+	FileSize_t file;
+	SettingData_t setting;
+	uint8_t fixModeId;
+	dataFuncType_t funcGetVersion;
+	dataFuncType_t funcGetTimesMode1;
+	dataFuncType_t funcGetTimesMode2;
+	dataFuncType_t funcGetTimesMode3;
+	dataFuncType_t funcGetAttr;
+} bleController_t;
 
 /***************蓝牙特征枚举********************/
 enum
@@ -157,19 +170,16 @@ enum
     IDX_CHAR_B,
     IDX_CHAR_VAL_B,
 
+    IDX_CHAR_C,
+    IDX_CHAR_VAL_C,
+	IDX_CHAR_CFG_C,
+
     HRS_IDX_NB,
 };
 
+
 /*****************函数声明**********************/
-void ble_Init(char *name);  // ble初始化
-void ble_ota(void);         // ota
-uint16_t CheckCmdAll(void); //确认命令并执行相对应的操作
-bool CheckCmd(uint8_t *Cmd);
-void ClrAllCmdFlag(void);
-void CheckCmdGoOn(uint8_t *Cmd, void (*func)());
-void SwitchCmdMode(uint8_t *Cmd, uint8_t Switch); //更改检修命令对应的回弹模式
-void ClrCmdFlag(uint8_t *Cmd);
-void EndMission(void);
-void appToast(char text[]);
+void ble_Init(bleController_t *bleController, char *name, uint8_t *(*funcGetVersion)(void), uint8_t *(*funcGetTimesMode1)(void), uint8_t *(*funcGetTimesMode2)(void), uint8_t *(*funcGetTimesMode3)(void), uint8_t *(*funcGetAttr)(void)); // ble初始化
 void ble_close(void); //关闭蓝牙
-#endif                // ble.h
+void endTest(uint8_t id, uint8_t data);
+#endif // ble.h
